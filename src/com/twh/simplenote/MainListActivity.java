@@ -2,13 +2,20 @@ package com.twh.simplenote;
 
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 
 public class MainListActivity extends ListActivity {
 
+	private static final int ACTIVITY_CREATE = 0;
+	private static final int ACTIVITY_EDIT = 1;
+	private static final int INSERT_ID = Menu.FIRST;
+//	private static final int DELETE_ID = Menu.FIRST + 1;
+	
 	private DatabaseHelper mDbHelper;
 	private Cursor mDiaryCursor;
 	
@@ -21,11 +28,45 @@ public class MainListActivity extends ListActivity {
         renderListView();
 	}
 
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		renderListView();
+	}
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.list, menu);
+		super.onCreateOptionsMenu(menu);
+		menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+//		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
 		return true;
+	}
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		// TODO Auto-generated method stub
+		switch(item.getItemId()){
+			case INSERT_ID:
+				createNote();
+				return true;
+			/*case DELETE_ID:
+				mDbHelper.deleteDiary(getListView().getSelectedItemId());
+				renderListView();
+				return true;*/
+			default:
+				break;
+			
+		}
+		
+		return super.onMenuItemSelected(featureId, item);
+		
+	}
+	
+	private void createNote() {
+		Intent i = new Intent(this,NoteEditActivity.class);
+		startActivityForResult(i,ACTIVITY_CREATE);
 	}
 	
 	private void renderListView() {

@@ -102,6 +102,7 @@ public class DatabaseHelper {
 				KEY_BODY, KEY_TYPE, KEY_CREATED, KEY_UPDATED }, null, null, null, null, null);
 	}
 
+	//get note by id
 	public Cursor getNote(long rowId) throws SQLException {
 
 		Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[] { KEY_ROWID, KEY_TITLE,
