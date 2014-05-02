@@ -5,5 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_insert">新建记录</string>
+    <string name="menu_export">导出</string>
+    <string name="menu_save">保存</string>
+    <string-array name="type_spinner">
+        <item>生活</item>
+        <item>日记 </item>
+        <item>心情</item>
+        <item>技术</item>
+    </string-array>
 
 </resources>

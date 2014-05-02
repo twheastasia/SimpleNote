@@ -17,7 +17,7 @@ public class MainListActivity extends ListActivity {
 //	private static final int DELETE_ID = Menu.FIRST + 1;
 	
 	private DatabaseHelper mDbHelper;
-	private Cursor mDiaryCursor;
+	private Cursor mNoteCursor;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +71,13 @@ public class MainListActivity extends ListActivity {
 	
 	private void renderListView() {
 		// TODO Auto-generated method stub
-//		mDiaryCursor = mDbHelper.getAllNotes();
-//		startManagingCursor(mDiaryCursor);
-//		String[] from = new String[] { DatabaseHelper.KEY_TITLE,
-//				DatabaseHelper.KEY_CREATED };
-//		int[] to = new int[] { R.id.text1, R.id.created };
-//		SimpleCursorAdapter notes=new SimpleCursorAdapter(this,R.layout.diary_row,mDiaryCursor,from,to);
-		//SimpleCursorAdapter notes=new SimpleCursorAdapter(this,android.R.layout.two_line_list_item,mDiaryCursor,from,to);
-//		setListAdapter(notes);
+		mNoteCursor = mDbHelper.getAllNotes();
+		startManagingCursor(mNoteCursor);
+		String[] from = new String[] { DatabaseHelper.KEY_TITLE,
+				DatabaseHelper.KEY_TYPE, DatabaseHelper.KEY_UPDATED };
+		int[] to = new int[] { R.id.text1, R.id.type, R.id.created };
+		SimpleCursorAdapter notes=new SimpleCursorAdapter(this, R.layout.diary_row, mNoteCursor, from, to);
+//		SimpleCursorAdapter notes=new SimpleCursorAdapter(this,android.R.layout.two_line_list_item,mNoteCursor,from,to);
+		setListAdapter(notes);
 	}
 }
