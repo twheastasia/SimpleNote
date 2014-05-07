@@ -36,20 +36,6 @@ public class NoteEditActivity extends Activity{
         mContentText = (EditText)findViewById(R.id.content_text);
         mTypeSpinner = (Spinner)findViewById(R.id.type_spinner);
         
-        //如果有值就直接显示
-        Bundle extras = getIntent().getExtras();
-        if(extras!=null){
-        	String title=extras.getString(DatabaseHelper.KEY_TITLE);
-        	String body=extras.getString(DatabaseHelper.KEY_BODY);
-        	mRowId = extras.getLong(DatabaseHelper.KEY_ROWID);
-        	if(title!=null){
-        		mTitleText.setText(title);
-        	}
-        	if(body!=null){
-        		mContentText.setText(body);
-        	}
-        }
-        
         // 建立数据源
         String[] mItems = getResources().getStringArray(R.array.type_spinner);
         //String[] mItems = getTypeString();
@@ -70,6 +56,24 @@ public class NoteEditActivity extends Activity{
 				// TODO Auto-generated method stub
 			}
 		});
+        
+        //如果有值就直接显示
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null){
+        	String title = extras.getString(DatabaseHelper.KEY_TITLE);
+        	String body = extras.getString(DatabaseHelper.KEY_BODY);
+        	String type = extras.getString(DatabaseHelper.KEY_TYPE);
+        	mRowId = extras.getLong(DatabaseHelper.KEY_ROWID);
+        	if(title != null){
+        		mTitleText.setText(title);
+        	}
+        	if(body != null){
+        		mContentText.setText(body);
+        	}
+        	if(type != null){
+        		mTypeSpinner.setSelection(getIndex(mItems, type), true);
+        	}
+        }
 	}
 
 	@Override
@@ -125,4 +129,13 @@ public class NoteEditActivity extends Activity{
 		return items;
 	}
 
+	private int getIndex(String[] items, String match){
+		for(int index = 0; index < items.length; index++){
+			if(match.equals(items[index])){
+				return index;
+			}
+		}
+		return 0;
+	}
+	
 }

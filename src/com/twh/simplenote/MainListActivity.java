@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class MainListActivity extends ListActivity {
@@ -79,5 +81,18 @@ public class MainListActivity extends ListActivity {
 		SimpleCursorAdapter notes=new SimpleCursorAdapter(this, R.layout.diary_row, mNoteCursor, from, to);
 //		SimpleCursorAdapter notes=new SimpleCursorAdapter(this,android.R.layout.two_line_list_item,mNoteCursor,from,to);
 		setListAdapter(notes);
+	}
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		Cursor c = mNoteCursor;
+		c.moveToPosition(position);
+		Intent i = new Intent(this, NoteEditActivity.class);
+		i.putExtra(DatabaseHelper.KEY_ROWID, id);
+		i.putExtra(DatabaseHelper.KEY_TITLE, c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_TITLE)));
+		i.putExtra(DatabaseHelper.KEY_BODY, c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_BODY)));
+		i.putExtra(DatabaseHelper.KEY_TYPE, c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_TYPE)));
+		startActivityForResult(i, ACTIVITY_EDIT);
 	}
 }

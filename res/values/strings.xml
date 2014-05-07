@@ -9,7 +9,7 @@
     <string name="menu_save">保存</string>
     <string-array name="type_spinner">
         <item>生活</item>
-        <item>日记 </item>
+        <item>日记</item>
         <item>心情</item>
         <item>技术</item>
     </string-array>
