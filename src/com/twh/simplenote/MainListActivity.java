@@ -1,13 +1,17 @@
 package com.twh.simplenote;
 
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -20,6 +24,7 @@ public class MainListActivity extends ListActivity {
 	
 	private DatabaseHelper mDbHelper;
 	private Cursor mNoteCursor;
+	private long currentId;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,20 @@ public class MainListActivity extends ListActivity {
 	    mDbHelper = new DatabaseHelper(this);
         mDbHelper.open();
         renderListView();
+        
+        getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int pos, long id) {
+				// TODO Auto-generated method stub
+				currentId = pos;
+				deleteDialog();
+				return false;
+			}
+        	
+        	
+		});
 	}
 
     @Override
@@ -78,7 +97,7 @@ public class MainListActivity extends ListActivity {
 		String[] from = new String[] { DatabaseHelper.KEY_TITLE,
 				DatabaseHelper.KEY_TYPE, DatabaseHelper.KEY_UPDATED };
 		int[] to = new int[] { R.id.text1, R.id.type, R.id.created };
-		SimpleCursorAdapter notes=new SimpleCursorAdapter(this, R.layout.diary_row, mNoteCursor, from, to);
+		SimpleCursorAdapter notes = new SimpleCursorAdapter(this, R.layout.diary_row, mNoteCursor, from, to);
 //		SimpleCursorAdapter notes=new SimpleCursorAdapter(this,android.R.layout.two_line_list_item,mNoteCursor,from,to);
 		setListAdapter(notes);
 	}
@@ -95,4 +114,29 @@ public class MainListActivity extends ListActivity {
 		i.putExtra(DatabaseHelper.KEY_TYPE, c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_TYPE)));
 		startActivityForResult(i, ACTIVITY_EDIT);
 	}
+	
+	public void deleteDialog(){
+	 	   new AlertDialog.Builder(MainListActivity.this)
+	 	   .setTitle("警告！")
+	 	   .setMessage("确定要删除当前记录？")
+	 	   .setPositiveButton(R.string.ok_label, 
+	 			   new DialogInterface.OnClickListener() {
+	 				@Override
+	 				public void onClick(DialogInterface dialog, int which) {
+	 					if (currentId > -1){
+	 						mDbHelper.deleteNote(currentId);
+	 					}
+	 					renderListView();
+	 				}
+	 			})
+	 		.setNegativeButton(R.string.back_label, 
+	 			   new DialogInterface.OnClickListener() {
+	 				@Override
+	 				public void onClick(DialogInterface dialog, int which) {
+	 				}
+	 			})
+	 	   .show();
+	}
+	
+	
 }

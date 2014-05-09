@@ -1,7 +1,10 @@
 package com.twh.simplenote;
 
 
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,6 +20,7 @@ public class NoteEditActivity extends Activity{
 	
 	private static final int EXPORT_ID = Menu.FIRST;
 	private static final int SAVE_ID = Menu.FIRST + 1;
+	private static final int DELETED_ID = Menu.FIRST + 2;
 	
 	private DatabaseHelper mDbHelper;
 	private EditText mTitleText;
@@ -82,6 +86,7 @@ public class NoteEditActivity extends Activity{
 		super.onCreateOptionsMenu(menu);
 		menu.add(0, EXPORT_ID, 0, R.string.menu_export);
 		menu.add(0, SAVE_ID, 0, R.string.menu_save);
+		menu.add(0, DELETED_ID, 0, R.string.menu_delete);
 		return true;
 	}
 
@@ -94,6 +99,9 @@ public class NoteEditActivity extends Activity{
 			return true;
 		case SAVE_ID:
 			saveNote();
+			return true;
+		case DELETED_ID:
+			deleteNote();
 			return true;
 		default:
 			break;
@@ -117,6 +125,35 @@ public class NoteEditActivity extends Activity{
 	private void exportNote() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void deleteNote() {
+		deleteNoteDialog();
+	}
+	
+	public void deleteNoteDialog(){
+	 	   new AlertDialog.Builder(NoteEditActivity.this)
+	 	   .setTitle("警告！")
+	 	   .setMessage("确定要删除当前记录？")
+	 	   .setPositiveButton(R.string.ok_label, 
+	 			   new DialogInterface.OnClickListener() {
+	 				@Override
+	 				public void onClick(DialogInterface dialog, int which) {
+	 					if (mRowId!=null){
+	 						mDbHelper.deleteNote(mRowId);
+	 					}
+	 					Intent mIntent=new Intent();
+	 					setResult(RESULT_OK,mIntent);
+	 					finish();
+	 				}
+	 			})
+	 		.setNegativeButton(R.string.back_label, 
+	 			   new DialogInterface.OnClickListener() {
+	 				@Override
+	 				public void onClick(DialogInterface dialog, int which) {
+	 				}
+	 			})
+	 	   .show();
 	}
 	
 	private String[] getTypeString() {

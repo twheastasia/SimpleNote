@@ -68,8 +68,8 @@ public class DatabaseHelper {
 		initvalues.put(KEY_TITLE, title);
 		initvalues.put(KEY_BODY, body);
 		initvalues.put(KEY_TYPE, type);
-		String createdtime = calendar.get(Calendar.YEAR)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
-			+calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE)+":" + calendar.get(Calendar.SECOND);
+		String createdtime = calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
+			+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
 		initvalues.put(KEY_CREATED, createdtime);
 		initvalues.put(KEY_UPDATED, createdtime);
 		return mDb.insert(DATABASE_TABLE,null,initvalues);
@@ -83,11 +83,37 @@ public class DatabaseHelper {
 		initvalues.put(KEY_TITLE, title);
 		initvalues.put(KEY_BODY, body);
 		initvalues.put(KEY_TYPE, type);
-		String createdtime = calendar.get(Calendar.YEAR)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
-			+calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE)+ ":" + calendar.get(Calendar.SECOND);
+		String createdtime = calendar.get(Calendar.YEAR)+"-"+ (calendar.get(Calendar.MONTH) + 1) +"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
+			+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
 		initvalues.put(KEY_UPDATED, createdtime);
 		return mDb.update(DATABASE_TABLE, initvalues, KEY_ROWID + "=" + rowid, null)>0;
 	}
+	
+	private String getMinute() {
+		int minute = 0;
+		String minuteStr = "";
+		minute = Calendar.getInstance().get(Calendar.MINUTE);
+		if(minute < 10){
+			minuteStr = "0" + minute;
+		}else{
+			minuteStr = "" + minute;
+		}
+		return minuteStr;
+	}
+	
+	private String getSecond() {
+		int second = 0;
+		String secondStr = "";
+		second = Calendar.getInstance().get(Calendar.SECOND);
+		if(second < 10){
+			secondStr = "0" + second;
+		}else{
+			secondStr = "" + second;
+		}
+		return secondStr;
+	}
+	
+	
 	
 	//delete
 	public boolean deleteNote(long rowId) {
@@ -99,7 +125,7 @@ public class DatabaseHelper {
 	public Cursor getAllNotes() {
 
 		return mDb.query(DATABASE_TABLE, new String[] { KEY_ROWID, KEY_TITLE,
-				KEY_BODY, KEY_TYPE, KEY_CREATED, KEY_UPDATED }, null, null, null, null, null);
+				KEY_BODY, KEY_TYPE, KEY_CREATED, KEY_UPDATED }, null, null, null, null, "_id desc");
 	}
 
 	//get note by id
@@ -107,7 +133,7 @@ public class DatabaseHelper {
 
 		Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[] { KEY_ROWID, KEY_TITLE,
 				KEY_BODY, KEY_TYPE, KEY_CREATED, KEY_UPDATED }, KEY_ROWID + "=" + rowId, null, null,
-				null, null, null);
+				null, null, "_id desc");
 		if (mCursor != null) {
 			mCursor.moveToFirst();
 		}

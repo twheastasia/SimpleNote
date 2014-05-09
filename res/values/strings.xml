@@ -7,6 +7,9 @@
     <string name="menu_insert">新建记录</string>
     <string name="menu_export">导出</string>
     <string name="menu_save">保存</string>
+    <string name="menu_delete">删除</string>
+    <string name="ok_label">确认</string>
+    <string name="back_label">取消</string>
     <string-array name="type_spinner">
         <item>生活</item>
         <item>日记</item>
