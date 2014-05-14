@@ -89,7 +89,7 @@ public class DatabaseHelper {
 		return mDb.update(DATABASE_TABLE, initvalues, KEY_ROWID + "=" + rowid, null)>0;
 	}
 	
-	private String getMinute() {
+	public static String getMinute() {
 		int minute = 0;
 		String minuteStr = "";
 		minute = Calendar.getInstance().get(Calendar.MINUTE);
@@ -101,7 +101,7 @@ public class DatabaseHelper {
 		return minuteStr;
 	}
 	
-	private String getSecond() {
+	public static String getSecond() {
 		int second = 0;
 		String secondStr = "";
 		second = Calendar.getInstance().get(Calendar.SECOND);
