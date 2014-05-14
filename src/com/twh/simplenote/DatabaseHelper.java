@@ -64,12 +64,10 @@ public class DatabaseHelper {
 	//insert
 	public long createNote(String title,String body, String type){
 		ContentValues initvalues = new ContentValues();
-		Calendar calendar = Calendar.getInstance();
 		initvalues.put(KEY_TITLE, title);
 		initvalues.put(KEY_BODY, body);
 		initvalues.put(KEY_TYPE, type);
-		String createdtime = calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
-			+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
+		String createdtime = currentTime();
 		initvalues.put(KEY_CREATED, createdtime);
 		initvalues.put(KEY_UPDATED, createdtime);
 		return mDb.insert(DATABASE_TABLE,null,initvalues);
@@ -79,16 +77,28 @@ public class DatabaseHelper {
 	//update
 	public boolean updateNote(long rowid,String title,String body, String type){
 		ContentValues initvalues = new ContentValues();
-		Calendar calendar = Calendar.getInstance();
 		initvalues.put(KEY_TITLE, title);
 		initvalues.put(KEY_BODY, body);
 		initvalues.put(KEY_TYPE, type);
-		String createdtime = calendar.get(Calendar.YEAR)+"-"+ (calendar.get(Calendar.MONTH) + 1) +"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
-			+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
+		String createdtime = currentTime();
 		initvalues.put(KEY_UPDATED, createdtime);
 		return mDb.update(DATABASE_TABLE, initvalues, KEY_ROWID + "=" + rowid, null)>0;
 	}
 	
+	public static String currentTime() {
+		Calendar calendar = Calendar.getInstance();
+		String currenttime = calendar.get(Calendar.YEAR)+"-"+ (calendar.get(Calendar.MONTH) + 1) +"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
+				+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
+		return currenttime;
+	}
+	
+	public static String currentTimeNumber() {
+		Calendar calendar = Calendar.getInstance();
+		String currenttime = calendar.get(Calendar.YEAR)+" "+ (calendar.get(Calendar.MONTH) + 1) +" "+calendar.get(Calendar.DAY_OF_MONTH)+" "
+				+calendar.get(Calendar.HOUR_OF_DAY)+" "+ getMinute() + " " + getSecond();
+		currenttime = currenttime.replaceAll(" ", "");
+		return currenttime;
+	}
 	public static String getMinute() {
 		int minute = 0;
 		String minuteStr = "";
