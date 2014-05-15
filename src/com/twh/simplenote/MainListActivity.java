@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class MainListActivity extends ListActivity {
 
@@ -21,6 +22,7 @@ public class MainListActivity extends ListActivity {
 	private static final int ACTIVITY_EDIT = 1;
 	private static final int INSERT_ID = Menu.FIRST;
 //	private static final int DELETE_ID = Menu.FIRST + 1;
+	private static final int EXPORT_ALL_ID = Menu.FIRST + 1;
 	
 	private DatabaseHelper mDbHelper;
 	private Cursor mNoteCursor;
@@ -62,6 +64,8 @@ public class MainListActivity extends ListActivity {
 		super.onCreateOptionsMenu(menu);
 		menu.add(0, INSERT_ID, 0, R.string.menu_insert);
 //		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
+		menu.add(0, EXPORT_ALL_ID, 0, R.string.menu_export);
+		
 		return true;
 	}
 	
@@ -76,6 +80,9 @@ public class MainListActivity extends ListActivity {
 				mDbHelper.deleteDiary(getListView().getSelectedItemId());
 				renderListView();
 				return true;*/
+			case EXPORT_ALL_ID:
+				exportAllNotes();
+				return true;
 			default:
 				break;
 			
@@ -138,5 +145,28 @@ public class MainListActivity extends ListActivity {
 	 	   .show();
 	}
 	
+	
+	private void exportAllNotes() {
+		String allStr = "";
+		String titleStr;
+		String timeStr;
+		String typeStr;
+		String contentStr;
+		Cursor c = mNoteCursor;
+		c.moveToFirst();
+		do{
+			titleStr = "";
+			timeStr = "";
+			typeStr = "";
+			contentStr = "";
+			titleStr = c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_TITLE));
+			timeStr = c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_UPDATED));
+			typeStr = c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_TYPE));
+			contentStr = c.getString(c.getColumnIndexOrThrow(DatabaseHelper.KEY_BODY));
+			allStr  +=  "标题：" + titleStr + "\n" + "修改时间：" + timeStr + "\n" + "分类：" + typeStr + "\n" + "内容：" + contentStr + "\n\n";
+		}while(c.moveToNext());
+		NoteEditActivity.createFile(allStr);
+		Toast.makeText(MainListActivity.this,"Saved all notes in /sdcard/simpleNote/",Toast.LENGTH_LONG).show();
+	}
 	
 }

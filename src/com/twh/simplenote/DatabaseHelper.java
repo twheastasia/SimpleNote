@@ -1,6 +1,9 @@
 package com.twh.simplenote;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,7 +25,7 @@ public class DatabaseHelper {
 	public static String DATABASE_NAME="notedatabase";
 	public static String DATABASE_TABLE="notes";
 	public static int version=1;
-	public static String DATABASE_CREATE= "create table notes (_id integer primary key autoincrement, "
+	public static String TABEL_CREATE= "create table notes (_id integer primary key autoincrement, "
 		+ "title text not null, body text not null, type text not null, created_at text not null, updated_at text not null);";
 	private SQLiteDatabase mDb;
 	private final Context mCtx;
@@ -36,7 +39,7 @@ public class DatabaseHelper {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			// TODO Auto-generated method stub
-			db.execSQL(DATABASE_CREATE);
+			db.execSQL(TABEL_CREATE);
 		}
 
 		@Override
@@ -86,43 +89,18 @@ public class DatabaseHelper {
 	}
 	
 	public static String currentTime() {
-		Calendar calendar = Calendar.getInstance();
-		String currenttime = calendar.get(Calendar.YEAR)+"-"+ (calendar.get(Calendar.MONTH) + 1) +"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "
-				+calendar.get(Calendar.HOUR_OF_DAY)+":"+ getMinute() + ":" + getSecond();
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String currenttime = formatter.format(currentTime);
 		return currenttime;
 	}
 	
 	public static String currentTimeNumber() {
-		Calendar calendar = Calendar.getInstance();
-		String currenttime = calendar.get(Calendar.YEAR)+" "+ (calendar.get(Calendar.MONTH) + 1) +" "+calendar.get(Calendar.DAY_OF_MONTH)+" "
-				+calendar.get(Calendar.HOUR_OF_DAY)+" "+ getMinute() + " " + getSecond();
-		currenttime = currenttime.replaceAll(" ", "");
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		String currenttime = formatter.format(currentTime);
 		return currenttime;
 	}
-	public static String getMinute() {
-		int minute = 0;
-		String minuteStr = "";
-		minute = Calendar.getInstance().get(Calendar.MINUTE);
-		if(minute < 10){
-			minuteStr = "0" + minute;
-		}else{
-			minuteStr = "" + minute;
-		}
-		return minuteStr;
-	}
-	
-	public static String getSecond() {
-		int second = 0;
-		String secondStr = "";
-		second = Calendar.getInstance().get(Calendar.SECOND);
-		if(second < 10){
-			secondStr = "0" + second;
-		}else{
-			secondStr = "" + second;
-		}
-		return secondStr;
-	}
-	
 	
 	
 	//delete

@@ -69,7 +69,7 @@ public class ExportNotes {
 		return result;
 	} 
     
-    public static void createFile(String title, String type, String content, String time) 
+    public static void createFile(String title, String text) 
     {
     	String filename = createFileName();
     	if(newFolder(DIR_NAME)){
@@ -78,7 +78,7 @@ public class ExportNotes {
     			  try {
     				  //在指定的文件夹中创建文件
     				  file.createNewFile();
-    				  exportNoteIntoTxt(filename, title, type, content, time);
+    				  exportNoteIntoTxt(filename, text);
     			  } catch (Exception e) {
     			  }
     		}
@@ -92,15 +92,15 @@ public class ExportNotes {
     }
     
   //向已创建的文件中写入数据
-  	public static void exportNoteIntoTxt(String name, String title, String type, String content, String time) {
+  	public static void exportNoteIntoTxt(String name, String text) {
   		FileWriter fw = null;
   		BufferedWriter bw = null;
   		try {
   			fw = new FileWriter(name, true);
   			// 创建FileWriter对象，用来写入字符流
   			bw = new BufferedWriter(fw); // 将缓冲对文件的输出
-  			String myreadline =  "标题：" + title + "\n" + "修改时间：" + time + "\n" + "分类：" + type + "\n" + "内容：" + content + "\n";
-  			bw.write(myreadline); // 写入文件
+  			//String myreadline =  "标题：" + title + "\n" + "修改时间：" + time + "\n" + "分类：" + type + "\n" + "内容：" + content + "\n";
+  			bw.write(text); // 写入文件
   			bw.newLine();
   			bw.flush(); // 刷新该流的缓冲
   			bw.close();

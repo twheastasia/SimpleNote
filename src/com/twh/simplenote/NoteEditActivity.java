@@ -137,7 +137,13 @@ public class NoteEditActivity extends Activity{
 
 	private void exportNote() {
 		// TODO Auto-generated method stub
-		createFile(mTitleText.getText().toString(), mTypeSpinner.getSelectedItem().toString(), mContentText.getText().toString(), DatabaseHelper.currentTime());
+		String titleStr = mTitleText.getText().toString();
+		String timeStr = DatabaseHelper.currentTime();
+		String typeStr = mTypeSpinner.getSelectedItem().toString();
+		String contentStr = mContentText.getText().toString();
+		String text =  "标题：" + titleStr + "\n" + "修改时间：" + timeStr + "\n" + "分类：" + typeStr + "\n" + "内容：" + contentStr + "\n";
+		createFile(text);
+		Toast.makeText(NoteEditActivity.this,"Saved in /sdcard/simpleNote/",Toast.LENGTH_LONG).show();
 	}
 	
 	private void deleteNote() {
@@ -237,7 +243,7 @@ public class NoteEditActivity extends Activity{
 		return result;
 	} 
 
-	public void createFile(String title, String type, String content, String time) 
+	public static void createFile(String text) 
 	{
 		String filename = createFileName();
 		if(newFolder(DIR_NAME)){
@@ -245,7 +251,7 @@ public class NoteEditActivity extends Activity{
 			if (!file.exists()) {
 				try {
 					//在指定的文件夹中创建文件
-					save(filename, title, type, content, time);
+					save(filename, text);
 				} catch (Exception e) {
 				}
 			}
@@ -258,16 +264,15 @@ public class NoteEditActivity extends Activity{
 		return fileName;
 	}
 
-	public void save(String name, String title, String type, String content, String time)
+	public static void save(String name, String text)
 	{
 		try {
-			String text =  "标题：" + title + "\n" + "修改时间：" + time + "\n" + "分类：" + type + "\n" + "内容：" + content + "\n";
 			File sdCardDir = Environment.getExternalStorageDirectory();//获取SDCard目录
 			File saveFile = new File(sdCardDir+"/simpleNote/", name +".txt");
 			FileOutputStream outStream = new FileOutputStream(saveFile);
 			outStream.write(text.getBytes());
 			outStream.close();
-			Toast.makeText(NoteEditActivity.this,"Saved",Toast.LENGTH_LONG).show();
+//			Toast.makeText(NoteEditActivity.this,"Saved in /sdcard/simpleNote/",Toast.LENGTH_LONG).show();
 		} catch (FileNotFoundException e) {
 			return;
 		}
