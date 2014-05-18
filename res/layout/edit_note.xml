@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dip"
-        android:text="标题" />
+        android:text="标题:" />
 
     <EditText
         android:id="@+id/title_text"
@@ -19,7 +19,8 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/textView1"
         android:ems="10"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:text="" />
 
     <TextView
         android:id="@+id/textView2"
@@ -28,34 +29,30 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/title_text"
         android:textSize="20dip"
-        android:text="内容" />
+        android:text="内容:" />
 
     <EditText
         android:id="@+id/content_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/type_spinner"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView2"
         android:ems="10"
         android:gravity="left|top"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine" >
 
-    <Spinner
-        android:id="@+id/type_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/textView3" />
+        <requestFocus />
+    </EditText>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/type_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/type_spinner"
-        android:text="分类"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:text="@string/undefined_type"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

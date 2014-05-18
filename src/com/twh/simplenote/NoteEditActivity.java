@@ -2,28 +2,27 @@ package com.twh.simplenote;
 
 
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
+import android.R.array;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class NoteEditActivity extends Activity{
@@ -36,11 +35,13 @@ public class NoteEditActivity extends Activity{
 	private static String SDCARD = "/sdcard/";
 	
 	private DatabaseHelper mDbHelper;
+	private Cursor mAllTypes;
 	private EditText mTitleText;
 	private EditText mContentText;
-	private Spinner mTypeSpinner;
+	private TextView mTypeText;
 	private Long mRowId;
-	private String mCurrentType;
+	private String mCurrentType = "未分类";
+	private EditText mAddTypeET;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,28 +52,10 @@ public class NoteEditActivity extends Activity{
         
         mTitleText = (EditText)findViewById(R.id.title_text);
         mContentText = (EditText)findViewById(R.id.content_text);
-        mTypeSpinner = (Spinner)findViewById(R.id.type_spinner);
-        
-        // 建立数据源
-        String[] mItems = getResources().getStringArray(R.array.type_spinner);
-        //String[] mItems = getTypeString();
-        // 建立Adapter并且绑定数据源
-        ArrayAdapter<String> _Adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, mItems);
-        //绑定 Adapter到控件
-        mTypeSpinner.setAdapter(_Adapter);
-
-        mTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				// TODO Auto-generated method stub
-				mCurrentType = parent.getItemAtPosition(position).toString();
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
+        mTypeText = (TextView)findViewById(R.id.type_textview);
+        mTypeText.setClickable(true);
+        mTypeText.setFocusable(true);
+        mAddTypeET = new EditText(this);
         
         //如果有值就直接显示
         Bundle extras = getIntent().getExtras();
@@ -88,9 +71,26 @@ public class NoteEditActivity extends Activity{
         		mContentText.setText(body);
         	}
         	if(type != null){
-        		mTypeSpinner.setSelection(getIndex(mItems, type), true);
+        		mTypeText.setText(type);
         	}
         }
+        
+        //add listener on clicking type text
+        mTypeText.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				showTypeDialog(); 
+			}
+		});
+        
+		if(mDbHelper.hasData("types")){
+		}else{
+			mDbHelper.insertType("生活");
+			mDbHelper.insertType("心情");
+			mDbHelper.insertType("技术");
+		}
+
 	}
 
 	@Override
@@ -122,6 +122,80 @@ public class NoteEditActivity extends Activity{
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void showTypeDialog() {
+        //choose type dialog
+        final String[] arrayType = getTypeString(); 
+        new AlertDialog.Builder(this)
+        		.setTitle("请选择日记的分类")
+                .setIcon(R.drawable.ic_launcher) 
+                .setSingleChoiceItems(arrayType, 0, new DialogInterface.OnClickListener() { 
+                    @Override 
+                    public void onClick(DialogInterface dialog, int which) { 
+                    	mTypeText.setText(arrayType[which]);
+                    	mCurrentType = arrayType[which];
+                    } 
+                })
+                .setPositiveButton("添加分类", new DialogInterface.OnClickListener() { 
+
+                    @Override 
+                    public void onClick(DialogInterface dialog, int which) { 
+                        // TODO Auto-generated method stub
+                    	addTypeDialog();
+                    } 
+                })
+                .setNegativeButton("确定", new DialogInterface.OnClickListener() { 
+
+                    @Override 
+                    public void onClick(DialogInterface dialog, int which) { 
+                        // TODO Auto-generated method stub
+                    	
+                    } 
+                })
+                .show(); 
+	}
+	
+	private void addTypeDialog() {
+		//add type dialog
+        new AlertDialog.Builder(this)
+		        .setTitle("请输入分类名称")
+		        .setIcon(android.R.drawable.ic_dialog_info)
+		        .setView(mAddTypeET)
+		        .setPositiveButton("确定", new DialogInterface.OnClickListener() { 
+		
+		            @Override 
+		            public void onClick(DialogInterface dialog, int which) { 
+		                // TODO Auto-generated method stub 
+		            	if(mAddTypeET.getText().toString().length() ==0){
+		            		Toast.makeText(NoteEditActivity.this,"请不要输入空的分类",Toast.LENGTH_LONG).show();
+		            		//用于不关闭对话框
+		            		try {
+		            			Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+		            			field.setAccessible(true);
+		            			field.set(dialog, false);
+		            		} catch (Exception e) {
+		            			e.printStackTrace();
+		            		}
+		            	}else{
+		            		String str = mAddTypeET.getText().toString();
+		            		mTypeText.setText(str);
+		            		mCurrentType = str;
+		            		mDbHelper.insertType(str);
+		            		//关闭对话框
+		            		try {
+		            			Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+		            			field.setAccessible(true);
+		            			field.set(dialog, true);
+		            		} catch (Exception e) {
+		            			e.printStackTrace();
+		            		}
+		            	}
+		            	
+		            } 
+		        })
+		        .setNegativeButton("取消", null)
+		        .show();
+	}
+	
 	private void saveNote() {
 		// TODO Auto-generated method stub
 		String title=mTitleText.getText().toString();
@@ -139,7 +213,7 @@ public class NoteEditActivity extends Activity{
 		// TODO Auto-generated method stub
 		String titleStr = mTitleText.getText().toString();
 		String timeStr = DatabaseHelper.currentTime();
-		String typeStr = mTypeSpinner.getSelectedItem().toString();
+		String typeStr = mTypeText.getText().toString();
 		String contentStr = mContentText.getText().toString();
 		String text =  "标题：" + titleStr + "\n" + "修改时间：" + timeStr + "\n" + "分类：" + typeStr + "\n" + "内容：" + contentStr + "\n";
 		createFile(text);
@@ -176,23 +250,24 @@ public class NoteEditActivity extends Activity{
 	}
 	
 	private String[] getTypeString() {
-		String[] items = new String[40];
-		items[0] = "未分类";
-		items[1] = "日记";
-		items[2] = "账单";
-		items[3] = "心情";
-		items[4] = "技术";
+		ArrayList<String> arrayList = new ArrayList<String>();
+		String[] items = new String[100];
+
+
+		mAllTypes = mDbHelper.getAllTypes();
+		startManagingCursor(mAllTypes);
+		Cursor c = mAllTypes;
+		c.moveToFirst();
+		String str;
+		do{
+			str = c.getString(c.getColumnIndexOrThrow("type"));
+			arrayList.add(str);
+		}while(c.moveToNext());
+		
+		items = arrayList.toArray(new String[arrayList.size()]);
 		return items;
 	}
 
-	private int getIndex(String[] items, String match){
-		for(int index = 0; index < items.length; index++){
-			if(match.equals(items[index])){
-				return index;
-			}
-		}
-		return 0;
-	}
 	
 	//新建文件夹
 	public static boolean newFolder(String file)
@@ -280,5 +355,22 @@ public class NoteEditActivity extends Activity{
 			return ;
 		}
 	}
+
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		super.finish();
+		mDbHelper.closeclose();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		mDbHelper.closeclose();
+	}
+
+	
+	
 
 }

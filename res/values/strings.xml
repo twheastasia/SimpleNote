@@ -10,6 +10,7 @@
     <string name="menu_delete">删除</string>
     <string name="ok_label">确认</string>
     <string name="back_label">取消</string>
+    <string name="undefined_type">未分类</string>
     <string-array name="type_spinner">
         <item>生活</item>
         <item>日记</item>
